@@ -1,10 +1,10 @@
 import { ApiResponse } from './types';
 
-const API_URL = `/bots/${process.env.NEXT_PUBLIC_BOT_NO}/${process.env.NEXT_PUBLIC_SKILL_NO}/execute`;
+const API_URL = `/bot1/bots/${process.env.NEXT_PUBLIC_BOT1_BOT_NO}/${process.env.NEXT_PUBLIC_BOT1_SKILL_NO}/execute`;
 const API_HEADERS = {
   'Content-Type': 'application/json',
-  'access-key': `${process.env.NEXT_PUBLIC_ACCESS_KEY}`,
-  'access-channel': `${process.env.NEXT_PUBLIC_ACCESS_CHANNEL}`,
+  'access-key': `${process.env.NEXT_PUBLIC_BOT1_ACCESS_KEY}`,
+  'access-channel': `${process.env.NEXT_PUBLIC_BOT1_ACCESS_CHANNEL}`,
 };
 
 export async function fetchChatResponse(
@@ -44,29 +44,20 @@ export async function fetchChatResponse(
       onChunk(chunk);
     }
 
-    // Return a mock API response for streaming mode
+    const lines = accumulatedData.split('data:');
+    console.log('lines', lines);
+    const line = lines[lines.length - 1];
+    const lineJson = JSON.parse(line);
     return {
-      data: accumulatedData,
-      code: '200',
-      success: true,
-      message: 'Success',
-      serverTime: Date.now(),
-      sessionId: `stream-${Date.now()}`,
-      requestId: `req-${Date.now()}`,
-      additions: {
-        botNo: 'streaming-bot',
-        tokenUsages: [
-          {
-            promptTokens: 0,
-            completionTokens: 0,
-            totalTokens: 0,
-            pictureNum: 0,
-            modelType: 'streaming-gpt',
-          },
-        ],
-        skillNo: 'streaming-skill',
-      },
-      traceId: `trace-${Date.now()}`,
+      data: lineJson.data,
+      code: lineJson.code,
+      success: lineJson.success,
+      message: lineJson.message,
+      serverTime: new Date(lineJson.serverTime).getTime(),
+      sessionId: lineJson.sessionId,
+      requestId: lineJson.requestId,
+      additions: lineJson.additions,
+      traceId: lineJson.traceId,
     };
   }
 

@@ -12,7 +12,7 @@ import { mockApiCall } from "@/lib/mock-api";
 import { toast } from "sonner";
 
 const STORAGE_KEY = "chat-sessions";
-const USE_MOCK_API = process.env.NODE_ENV === 'development';
+const USE_MOCK_API = process.env.NEXT_PUBLIC_USE_MOCK_API === 'true';
 
 export default function Home() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
